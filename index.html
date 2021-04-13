@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Image Animation | Urvesh Patel</title>
+        <link
+            rel="shortcut icon"
+            href="images/favicon.ico"
+            type="image/x-icon"
+        />
+        <style>
+            #container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            #canvas {
+                align-items: center;
+            }
+            div {
+                display: flex;
+                flex-wrap: wrap;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+            }
+            button {
+                margin: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <canvas style="border: 1px solid black" id="canvas"></canvas>
+            <br />
+            <div>
+                <button id="backward">Backward (Down Arrow Key)</button>
+                <button id="block">Block (Left Arrow Key)</button>
+                <button id="forward">Forward (Right Arrow Key)</button>
+                <button id="kick">Kick (Up Arrow Key)</button>
+                <button id="punch">Punch (Spacebar)</button>
+            </div>
+            <a href="index.html"><button>Goto Home</button> </a>
+        </div>
+        <script src="drawimage.js"></script>
+    </body>
+</html>
