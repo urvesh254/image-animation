@@ -27,9 +27,6 @@ let board;
 class Img {
     constructor(name, src, y, x) {
         this.name = name;
-        if (!name) {
-            return;
-        }
         this.x = x;
         this.y = y;
 
@@ -48,7 +45,7 @@ let resetGame = () => {
     for (let row = 0; row < BOARD_LENGTH; row++) {
         let temp = [];
         for (let col = 0; col < BOARD_LENGTH; col++) {
-            temp.push(new Img(""));
+            temp.push("");
         }
         board.push(temp);
     }
@@ -76,9 +73,9 @@ let checkWinCondition = () => {
     // Check win for all rows.
     for (let row = 0; row < BOARD_LENGTH; row++) {
         if (
-            board[row][0].name &&
-            board[row][0].name == board[row][1].name &&
-            board[row][1].name == board[row][2].name
+            board[row][0] &&
+            board[row][0] == board[row][1] &&
+            board[row][1] == board[row][2]
         ) {
             drawLine(
                 0,
@@ -95,9 +92,9 @@ let checkWinCondition = () => {
     // Check win for all colums.
     for (let col = 0; col < BOARD_LENGTH; col++) {
         if (
-            board[0][col].name &&
-            board[0][col].name == board[1][col].name &&
-            board[1][col].name == board[2][col].name
+            board[0][col] &&
+            board[0][col] == board[1][col] &&
+            board[1][col] == board[2][col]
         ) {
             drawLine(
                 col * (WIDTH / 3) + WIDTH / 6,
@@ -113,17 +110,17 @@ let checkWinCondition = () => {
 
     // Check For two diagonals.
     if (
-        board[0][0].name &&
-        board[0][0].name == board[1][1].name &&
-        board[1][1].name == board[2][2].name
+        board[0][0] &&
+        board[0][0] == board[1][1] &&
+        board[1][1] == board[2][2]
     ) {
         drawLine(0, 0, WIDTH, HEIGHT, "red", 10);
         return true;
     }
     if (
-        board[0][2].name &&
-        board[0][2].name == board[1][1].name &&
-        board[1][1].name == board[2][0].name
+        board[0][2] &&
+        board[0][2] == board[1][1] &&
+        board[1][1] == board[2][0]
     ) {
         drawLine(0, HEIGHT, WIDTH, 0, "red", 10);
         return true;
@@ -145,15 +142,13 @@ canvas.addEventListener("click", () => {
     let col = Math.floor(x / (WIDTH / 3));
 
     console.log(row, col);
-    if (board[row][col].name) {
+    if (board[row][col]) {
         alert("This placed is filled, Try another.");
         return;
     }
 
-    board[row][col] =
-        Math.random() < 0.5
-            ? new Img("O", SOURCE["O"], row, col)
-            : new Img("X", SOURCE["X"], row, col);
+    board[row][col] = "X";
+    new Img("X", SOURCE["X"], row, col);
     console.log(checkWinCondition());
     // if (checkWinCondition()) {
     //     winMessage("You Win!");
