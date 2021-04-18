@@ -4,11 +4,13 @@ let ctx = canvas.getContext("2d");
 canvas.width = 500;
 canvas.height = 500;
 
+const BOARD_LENGTH = 3;
 const WIDTH = 500;
 const HEIGHT = 500;
 const SOURCE = {
     X: "assets/X.png",
     O: "assets/O.png",
+    blank: "assets/blank.png",
 };
 const WIN_POSITIONS = [
     (0, 1, 2),
@@ -20,17 +22,17 @@ const WIN_POSITIONS = [
     (0, 4, 8),
     (2, 4, 6),
 ];
-let board = [
-    [undefined, undefined, undefined],
-    [undefined, undefined, undefined],
-    [undefined, undefined, undefined],
-];
+let board;
 
 class Img {
     constructor(name, src, y, x) {
         this.name = name;
+        if (!name) {
+            return;
+        }
         this.x = x;
         this.y = y;
+
         this.image = new Image(WIDTH / 3, WIDTH / 3);
         this.image.src = src;
         this.image.onload = () => {
@@ -40,6 +42,19 @@ class Img {
         };
     }
 }
+
+let resetGame = () => {
+    board = [];
+    for (let row = 0; row < BOARD_LENGTH; row++) {
+        let temp = [];
+        for (let col = 0; col < BOARD_LENGTH; col++) {
+            temp.push(new Img(""));
+        }
+        board.push(temp);
+    }
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    drawLines();
+};
 
 let drawLine = (x1, y1, x2, y2, color = "black", lineWidth = 5) => {
     ctx.beginPath();
@@ -61,47 +76,57 @@ let checkWinCondition = () => {
     // Check win for all rows.
     for (let row = 0; row < BOARD_LENGTH; row++) {
         if (
-            board[row][0] != EMPTY_CHAR &&
-            board[row][0] == board[row][1] &&
-            board[row][1] == board[row][2]
+            board[row][0].name &&
+            board[row][0].name == board[row][1].name &&
+            board[row][1].name == board[row][2].name
         ) {
-            Player.winPlayer = board[row][0] == player1.ch ? player1 : player2;
-            running = false;
-            return;
+            drawLine(
+                0,
+                row * (HEIGHT / 3) + HEIGHT / 6,
+                WIDTH,
+                row * (HEIGHT / 3) + HEIGHT / 6,
+                "red",
+                10
+            );
+            return true;
         }
     }
 
     // Check win for all colums.
     for (let col = 0; col < BOARD_LENGTH; col++) {
         if (
-            board[0][col] != EMPTY_CHAR &&
-            board[0][col] == board[1][col] &&
-            board[1][col] == board[2][col]
+            board[0][col].name &&
+            board[0][col].name == board[1][col].name &&
+            board[1][col].name == board[2][col].name
         ) {
-            Player.winPlayer = board[0][col] == player1.ch ? player1 : player2;
-            running = false;
-            return;
+            drawLine(
+                col * (WIDTH / 3) + WIDTH / 6,
+                0,
+                col * (WIDTH / 3) + WIDTH / 6,
+                HEIGHT,
+                "red",
+                10
+            );
+            return true;
         }
     }
 
     // Check For two diagonals.
     if (
-        board[0][0] != EMPTY_CHAR &&
-        board[0][0] == board[1][1] &&
-        board[1][1] == board[2][2]
+        board[0][0].name &&
+        board[0][0].name == board[1][1].name &&
+        board[1][1].name == board[2][2].name
     ) {
-        Player.winPlayer = board[0][0] == player1.ch ? player1 : player2;
-        running = false;
-        return;
+        drawLine(0, 0, WIDTH, HEIGHT, "red", 10);
+        return true;
     }
     if (
-        board[0][2] != EMPTY_CHAR &&
-        board[0][2] == board[1][1] &&
-        board[1][1] == board[2][0]
+        board[0][2].name &&
+        board[0][2].name == board[1][1].name &&
+        board[1][1].name == board[2][0].name
     ) {
-        Player.winPlayer = board[0][0] == player1.ch ? player1 : player2;
-        running = false;
-        return;
+        drawLine(0, HEIGHT, WIDTH, 0, "red", 10);
+        return true;
     }
     return false;
 };
@@ -112,29 +137,34 @@ let winMessage = (msg) => {
 
 let computerTurn = () => {};
 
-window.onclick = () => {
+canvas.addEventListener("click", () => {
     let rect = canvas.getBoundingClientRect();
     let x = event.clientX - rect.left;
     let y = event.clientY - rect.top;
     let row = Math.floor(y / (HEIGHT / 3));
     let col = Math.floor(x / (WIDTH / 3));
 
-    let num = row * 3 + col;
-
-    if (board[row][col]) {
+    console.log(row, col);
+    if (board[row][col].name) {
         alert("This placed is filled, Try another.");
         return;
     }
 
-    board[row][col] = new Img("X", SOURCE["X"], row, col);
+    board[row][col] =
+        Math.random() < 0.5
+            ? new Img("O", SOURCE["O"], row, col)
+            : new Img("X", SOURCE["X"], row, col);
+    console.log(checkWinCondition());
     // if (checkWinCondition()) {
     //     winMessage("You Win!");
+    // return;
     // }
 
     // computerTurn();
     // if (checkWinCondition()) {
     //     winMessage("You Lost!");
+    // return;
     // }
-};
+});
 
-window.onload = drawLines();
+window.onload = resetGame();
